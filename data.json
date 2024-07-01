@@ -50,7 +50,7 @@
       },
       {
         "name": "Supporting Code",
-        "description": "Define all the functions needed to compose the response",
+        "description": "Define all the functions needed to compose or validate the response",
         "type": "javascript",
         "content": "function getDetails(policyNumber, detailType) {\n  if (data.claims.hasOwnProperty(policyNumber)) {\n    if (data.claims[policyNumber].hasOwnProperty(detailType)) {\n      return data.claims[policyNumber][detailType];\n    }\n    return [];\n  }\n  return null;\n}\nfunction validatePolicyDetails(policyNumber){\n  return data.claims.hasOwnProperty(policyNumber);\n}"
       },
