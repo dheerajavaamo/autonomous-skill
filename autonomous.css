@@ -1,0 +1,42 @@
+
+.field-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.field-item select {
+    margin-left: 10px;
+}
+.button-container {
+    text-align: center;
+    margin-top: 10px;
+    margin: 50px;
+}
+.input-group {
+    margin-bottom: 10px;
+}
+.editable {
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+    color: #26a69a;
+}
+.codeflask {
+    height: 480px !important;
+    width: 68% !important;;
+}
+.textarea-fixed {
+    height: 500px !important; /* Adjust this height as necessary */
+    overflow-y: auto !important;
+}
+.textarea-material {
+    border: 1px solid #9e9e9e !important; /* Light gray border */
+    border-radius: 4px !important;        /* Rounded corners */
+    padding: 10px !important;             /* Padding inside the textarea */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12) !important; /* Inner shadow */
+}
+.textarea-material:focus {
+    border-color: #26a69a !important;     /* Border color on focus */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12) 0 0 8px rgba(38, 166, 154, 0.6) !important; /* Outer glow on focus */
+}

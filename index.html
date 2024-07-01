@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Materialize Tabs Example</title>
+    <script src="https://unpkg.com/codeflask/build/codeflask.min.js"></script>
+    <!-- Include CodeFlask CSS for styling -->
+    <link rel="stylesheet" href="https://unpkg.com/codeflask/build/codeflask.min.css">
+
+    <!-- Import Google Icon Font -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Import materialize.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    
+    <link href="autonomous.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1 id="title">Page Title</h1>
+
+    <!-- Tabs navigation -->
+    <ul id="tabs" class="tabs">
+        <!-- Tabs will be populated here -->
+        <li class="tab col s3">
+            <a href="#" class="add-tab"><i class="material-icons">add</i></a>
+        </li>
+    </ul>
+
+    <!-- Tab contents will be populated here -->
+</div>
+
+<!-- Import jQuery and Materialize JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.getJSON('data.json', function(data) {
+            $("#title").text(data.title);
+
+            const tabs = data.tabs;
+
+            // Populate tabs
+            tabs.forEach((tab, index) => {
+                const tabId = 'tab' + (index + 1);
+                const tabElement = `
+                    <li class="tab col s3">
+                        <a href="#${tabId}">${tab.name}</a>
+                    </li>
+                `;
+                $('.add-tab').parent().before(tabElement);
+
+                const tabContent = `
+                    <div id="${tabId}" class="col s12">
+                        <h6>${tab.description}</h6>
+                        ${tab.links ? getTextFieldContainerHTML() : ""}
+                        ${tab.fields ? getFieldsHTML() : ""}
+                        ${getTextAreaHTML(tab)}
+                    </div>
+                `;
+                
+                $('.container').append(tabContent);
+
+                if(tab.links) addLinks(tab.links);
+                if(tab.fields) addFields(tab.fields);
+            });
+
+            // Reinitialize tabs
+            $('.tabs').tabs();
+
+            // Edit tab names
+            $(document).on('click', '.editable', function(e) {
+                e.preventDefault();
+                let $tab = $(this).prev('a');
+                let newName = prompt("Enter new tab name:", $tab.text());
+                if (newName) {
+                    $tab.text(newName);
+                }
+            });
+
+            // Add new tab
+            $('.add-tab').on('click', function(e) {
+                e.preventDefault();
+                let newTabName = prompt("Enter new tab name:");
+                if (newTabName) {
+                    let tabId = 'tab' + ($('.tabs .tab').length);
+                    let newTab = `
+                        <li class="tab col s3">
+                            <a href="#${tabId}">${newTabName}</a>
+                            <i class="material-icons editable">edit</i>
+                        </li>`;
+                    $(newTab).insertBefore('.add-tab');
+
+                    let newTabContent = `
+                        <div id="${tabId}" class="col s12">
+                            <h5>${newTabName} Title</h5>
+                            <textarea class="materialize-textarea textarea-fixed textarea-material"></textarea>
+                        </div>
+                    `;
+                    $('.container').append(newTabContent);
+
+                    // Reinitialize tabs
+                    $('.tabs').tabs();
+                }
+            });
+            $(".language-javascript").each(function(index, element){
+                    let editor = new CodeFlask(element, { language: 'js',
+                    lineNumbers: true 
+                });
+            });
+            $(".language-json").each(function(index, element){
+                let editor = new CodeFlask(element, { 
+                    language: 'json',
+                    lineNumbers: true
+                });
+                editor.addLanguage('json', Prism.languages['json']);
+            });
+
+            initializeAddFieldButton();
+        });
+    });
+    function getTextAreaHTML(tab){
+        if(tab.type){
+            return `<div class="textarea-material textarea-fixed ${tab.type == "javascript" ? "language-javascript" : tab.type == "json" ? "language-json" : ""}">${getContent(tab)}</div>`;
+        }
+        else{
+            return `<textarea class="materialize-textarea textarea-fixed textarea-material">${tab.content}</textarea>`;
+        }
+    }
+    function getContent(tab){
+        return tab.content;
+    }
+    function getFieldsHTML(){
+        return `
+                <div id="field-list">
+            </div>
+            <!-- Plus button to add new items -->
+             <div class="button-container">
+                <button id="add-field"><i class="material-icons">add</i></button>
+             </div>
+            `;
+    }
+    function addField(field, itemList) {
+        fieldCount++;
+
+        itemList = document.getElementById('field-list');
+        const newItem = document.createElement('div');
+        newItem.classList.add('field-item');
+        newItem.innerHTML = `
+            <input type="text" id="field${fieldCount}" name="field${fieldCount}" ${field && field.name ? "value=\""+field.name+"\"" : ""}>
+            <select>
+                <option ${field && field.type == "string" ? "selected" : ""} value="string">String</option>
+                <option ${field && field.type == "date" ? "selected" : ""} value="date">Date</option>
+                <option ${field && field.type == "number" ? "selected" : ""} value="number">Number</option>
+                <option ${field && field.type == "amount" ? "selected" : ""} value="amount">Amount</option>
+            </select>
+        `;
+
+        itemList.appendChild(newItem);
+        $('select').formSelect();
+    }
+
+    function addFields(fields){
+        fields.forEach(function(field){
+            addField(field);
+        });
+    }
+
+    let fieldCount = 1;
+    function initializeAddFieldButton(){
+        const addItemButton = document.getElementById('add-field');
+
+        addItemButton.addEventListener('click', addField);
+    }
+    function getTextFieldContainerHTML(){
+        return `<div id="textFieldsContainer">
+                    
+                </div>
+
+                <!-- Button to add new text fields -->
+                <!-- Container for the button -->
+                <div class="button-container">
+                    <button onclick="addTextField()">+</button>
+                </div>
+                <p>JSON Data</p>
+            `;  
+    }
+    let textFieldCount = 0;
+
+    function getTextFieldHTML(link){
+        textFieldCount++;
+
+        // Create a new div for the new text field
+        const newTextField = document.createElement('div');
+        newTextField.className = 'input-group';
+        newTextField.innerHTML = `
+            <label for="textField${textFieldCount}">Data Source ${textFieldCount}:</label>
+            <input type="text" id="textField${textFieldCount}" name="textField${textFieldCount}" value="${link ? link : ""}">
+        `;
+        return newTextField;
+    }
+
+    function addTextField(link) {
+        let newTextField = getTextFieldHTML(link);
+
+        // Append the new div to the container
+        document.getElementById('textFieldsContainer').appendChild(newTextField);
+    }
+
+    function addLinks(links){
+        links.forEach(function(link){
+            addTextField(link);
+        });
+    }
+</script>
+
+</body>
+</html>
