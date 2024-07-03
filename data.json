@@ -14,7 +14,7 @@
       {
         "name": "Parameters",
         "description": "What information do you want to collect?",
-        "content": "Collect these from the user, in this specific order: name, policy_number(6 digit number), date_of_birth. \n\nThese are all mandatory fields, ensure date_of_birth is in the past and after the year 1900."
+        "content": "Collect these from the user, in this specific order: Name, Policy Number(6 digit number), Date of birth, Phone number. \n\nAll these parameters should be available in json format globally in object user_info.\n\nAll of these parameters are mandatory\nEnsure Date of birth is in the past and after the year 1900\nEnsure Phone number is 10 digit\nEnsure Policy number is valid by calling the function isPolicyValid(policy_number)\n"
       },
       {
         "name": "Response Formatting",
